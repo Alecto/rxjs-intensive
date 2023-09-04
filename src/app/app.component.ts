@@ -2,9 +2,10 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  standalone: true,
+  template: `<h1>Hello</h1>`,
+  styles: [``]
 })
 export class AppComponent {
-  title = 'rxjs-intensive';
+  
 }
