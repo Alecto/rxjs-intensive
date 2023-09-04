@@ -43,11 +43,13 @@ export class AppComponent implements OnInit {
 
     const consumer = new CustomIterator([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
 
-    console.log(consumer.next());
-    console.log(consumer.next());
-    console.log(consumer.next());
-    console.log(consumer.next());
-    console.log(consumer.next());
+    // console.log(consumer.next());
+    // console.log(consumer.next());
+    // console.log(consumer.next());
+    // console.log(consumer.next());
+    // console.log(consumer.next());
+
+    Array.from(consumer).forEach((v) => console.log(v));
 
   }
 
