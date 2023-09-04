@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { interval } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -11,28 +10,44 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
 
-    // const sequence = new Promise(resolve => {
-    //   let count = 1;
-    //   setInterval(() => {
-    //     resolve(count++);
-    //   }, 1000);
-    // });
-    // sequence.then(console.log);
-    // sequence.then(console.log);
+    class CustomIterator {
+      cursor: number = 0;
+      value!: number;
 
-    // const sequence = function* iteratorFn() {
-    //   let count = 1;
-    //   while (true) {
-    //     yield count++;
-    //   }
-    // }();
-    // console.log(sequence.next().value);
-    // console.log(sequence.next().value);
-    // console.log(sequence.next().value);
-    // console.log(sequence.next().value);
-    // console.log(sequence.next().value);
+      constructor(private arr: number[], private divisor: number = 3) {}
 
-    interval(1000).subscribe(console.log);
+      next() {
+        while (this.cursor < this.arr.length) {
+          this.value = this.arr[this.cursor++];
+
+          if (this.value % this.divisor === 0) {
+            return {
+              done: false,
+              value: this.value
+            };
+          }
+        }
+
+        return {
+          done: true,
+          value: this.value
+        };
+      }
+
+      [Symbol.iterator]() {
+        return {
+          next: this.next.bind(this)
+        };
+      }
+    }
+
+    const consumer = new CustomIterator([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+
+    console.log(consumer.next());
+    console.log(consumer.next());
+    console.log(consumer.next());
+    console.log(consumer.next());
+    console.log(consumer.next());
 
   }
 
