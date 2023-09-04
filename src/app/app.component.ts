@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { interval } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -21,17 +22,17 @@ export class AppComponent implements OnInit {
 
     // const sequence = function* iteratorFn() {
     //   let count = 1;
-    //
     //   while (true) {
     //     yield count++;
     //   }
     // }();
-    //
     // console.log(sequence.next().value);
     // console.log(sequence.next().value);
     // console.log(sequence.next().value);
     // console.log(sequence.next().value);
     // console.log(sequence.next().value);
+
+    interval(1000).subscribe(console.log);
 
   }
 
