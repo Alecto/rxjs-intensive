@@ -44,15 +44,21 @@ class DoubleSubscriber extends Subscriber<number> {
 }
 
 function double(source$: Observable<any>) {
-  const observable$ = new Observable();
-  observable$.source = source$;
-  observable$.operator = {
+  return source$.lift({
     call(subscriber: Subscriber<unknown>, source: any) {
       source.subscribe(new DoubleSubscriber(subscriber));
     }
-  };
+  });
+  // создали новый поток на базе текущего поток, но с новым оператором.
 
-  return observable$;
+  // const observable$ = new Observable();
+  // observable$.source = source$;
+  // observable$.operator = {
+  //   call(subscriber: Subscriber<unknown>, source: any) {
+  //     source.subscribe(new DoubleSubscriber(subscriber));
+  //   }
+  // };
+  // return observable$;
 }
 
 function helloRxjs(source$: Observable<any>) {
