@@ -1,60 +1,49 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { LiveSearchService, request } from './live-search.service';
+import { fromEvent } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { exhaustMap, fromEvent } from 'rxjs';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { GithubResponseInterface } from './github-response.interface';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  template: `
-    <input type="text" #input>
-  `,
   imports: [CommonModule, HttpClientModule],
+  template: `
+    <div class="container py-5">
+      <div class="row">
+        <div class="col-6">
+          <div class="mb-3">
+            <label for="search" class="form-label">Поиск</label>
+            <input #input id="search" type="search" class="form-control" placeholder="Начните вводить текст...">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--  todo: container + вывод результата в контейнер  -->
+  `,
   styles: [``]
 })
 export class AppComponent implements OnInit, AfterViewInit {
 
   @ViewChild('input') input!: ElementRef;
 
-  constructor(private http: HttpClient) {}
+  constructor(private lss: LiveSearchService, private http: HttpClient) {}
 
   ngOnInit(): void {
-
-    // Постановка проблемы - вложенные Observable:
-    // interval(2000)
-    //   .pipe(
-    //     map(v => {
-    //       return of(v * 2);
-    //     })
-    //   )
-    //   .subscribe(res => {
-    //     res.subscribe(value => {
-    //       console.log(value);
-    //     });
-    //   });
-
   }
 
   ngAfterViewInit() {
 
-    const sequence$ = fromEvent<InputEvent>(this.input.nativeElement, 'input');
-
-    sequence$.pipe(
-      // debounceTime(500),
-      // map + mergeAll = mergeMap
-      // map + switchAll = switchMap
-      // map + concatAll = concatMap, равно mergeMap(..., 1), где concurrent = 1
-      // map + exhaustAll = exhaustMap
-      exhaustMap(e => {
-        const value = (e.target as HTMLInputElement).value;
-        return fetch(`/assets/data.json`).then(res => res.json());
-        // return this.http.get(`https://api.github.com/search/repositories?q=${value}`);
-      })
-    ).subscribe(
-      value => {
-        console.log(value);
-      }
+    const sequence$ = this.lss.liveSearch(
+      fromEvent<InputEvent>(this.input.nativeElement, 'input'),
+      (value: string) => request(this.http.get<GithubResponseInterface>(`https://api.github.com/search/repositories?q=${value}`))
     );
+
+    sequence$.subscribe(res => {
+      console.log(res);
+    });
 
   }
 

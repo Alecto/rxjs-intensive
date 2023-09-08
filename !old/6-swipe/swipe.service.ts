@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { fromEvent, map, merge, Observable, zip } from 'rxjs';
+import { fromEvent, iif, map, merge, Observable, of, switchMap, zip } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -30,12 +30,19 @@ export class SwipeService {
 
   private getX(source1$: Observable<TouchEvent>, source2$: Observable<MouseEvent>): Observable<number> {
     return merge(source1$, source2$).pipe(
-      map((event: MouseEvent | TouchEvent) => {
-        if (event instanceof TouchEvent) {
-          return event.changedTouches[0].clientX;
-        }
-        return event.clientX;
+      switchMap((event: MouseEvent | TouchEvent) => {
+        return iif(
+          () => event instanceof TouchEvent,
+          of((event as TouchEvent)).pipe(map(e => e.changedTouches[0].clientX)),
+          of((event as MouseEvent)).pipe(map((e => e.clientX)))
+        );
       })
+      // map((event: MouseEvent | TouchEvent) => {
+      //   if (event instanceof TouchEvent) {
+      //     return event.changedTouches[0].clientX;
+      //   }
+      //   return event.clientX;
+      // })
     );
   }
 
