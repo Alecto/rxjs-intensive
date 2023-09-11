@@ -1,8 +1,6 @@
 import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { AsyncSubject, map, Observable } from 'rxjs';
-import { ajax } from 'rxjs/internal/ajax/ajax';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -13,43 +11,12 @@ import { ajax } from 'rxjs/internal/ajax/ajax';
 })
 export class AppComponent implements OnInit, AfterViewInit {
 
-  items$!: any;
-
   constructor(
-    @Inject(DOCUMENT) private document: Document,
-    private http: HttpClient
+    @Inject(DOCUMENT) private document: Document
   ) {}
 
-  ngOnInit(): void {
-
-    this.items$ = this.getItems('https://jsonplaceholder.typicode.com/users')
-      .pipe(map((res: any) => res.response));
-
-    this.items$.subscribe((value: any) => {
-      console.log('subscribe #1', value);
-    });
-
-    setTimeout(() => {
-      this.items$.subscribe((value: any) => {
-        console.log('subscribe #2', value);
-      });
-    }, 5000);
-
-  }
+  ngOnInit(): void { }
 
   ngAfterViewInit() { }
-
-  private getItems(url: string) {
-    let subject: AsyncSubject<any>;
-    return new Observable(subscriber => {
-      if (!subject) {
-        subject = new AsyncSubject();
-        console.log(this.http.get(url)); // Observable {source: Observable, operator: ƒ}
-        console.log(ajax(url)); // Observable {_subscribe: ƒ}
-        ajax(url).subscribe(subject);
-      }
-      return subject.subscribe(subscriber);
-    });
-  }
 
 }
