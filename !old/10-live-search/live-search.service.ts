@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import {
   bufferCount,
+  catchError,
   concatMap,
   debounceTime,
   distinctUntilChanged,
+  EMPTY,
   filter,
   map,
   Observable,
@@ -62,6 +64,10 @@ export function request(source$: Observable<GithubResponseInterface>) {
     reduce((resultString: string, htmlStrings: string[]) => {
       return resultString += createRow(htmlStrings);
     }, ''),
-    map(htmlString => htmlString.trim())
+    map(htmlString => htmlString.trim()),
+    catchError(error => {
+      console.log('CATCH error:', error);
+      return EMPTY;
+    })
   );
 }
